@@ -1,0 +1,5 @@
+{
+    "sketch": "ballspeed\\ballspeed.ino",
+    "board": "arduino:avr:uno",
+    "output": "ballspeed\\build"
+}

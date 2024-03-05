@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "author": "박준호",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": 10.2, "left": 28.2, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -161.7, "left": 72.7, "attrs": {} }
+  ],
+  "connections": [
+    [ "ultrasonic1:GND", "uno:GND.1", "black", [ "v28.8", "h-58.5" ] ],
+    [ "uno:5V", "ultrasonic1:VCC", "red", [ "v38.3", "h-197.8", "v-307.2" ] ],
+    [ "ultrasonic1:TRIG", "uno:9", "green", [ "v57.6", "h37.2" ] ],
+    [ "ultrasonic1:ECHO", "uno:8", "green", [ "v48", "h37.2" ] ]
+  ],
+  "dependencies": {}
+}
