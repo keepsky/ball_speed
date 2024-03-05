@@ -1,11 +1,20 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C_Hangul.h>
+
+
 #define TRIG 9 //TRIG 핀 설정 (초음파 보내는 핀)
 #define ECHO 8 //ECHO 핀 설정 (초음파 받는 핀)
+
+LiquidCrystal_I2C_Hangul lcd(0x27, 16, 2);
 
 void setup() 
 {
   Serial.begin(9600);
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
+
+  lcd.init();
+  lcd.backlight();
 }
 
 void loop()
@@ -51,7 +60,7 @@ void loop()
     }
 
 //#define DEBUG    
-#ifdef DEBUG
+#ifdef TRACE
     //Serial.print("Duration : ");
     //Serial.println(duration); //초음파가 반사되어 돌아오는 시간을 보여줍니다.
     Serial.print("time : ");
@@ -64,7 +73,7 @@ void loop()
 #endif
     if(speed > 2)
     {
-#if 0      
+#ifdef DEBUG      
       Serial.print("speed : ");
       if(forward)
         Serial.print("(+) ");
@@ -73,7 +82,8 @@ void loop()
       Serial.print(speed);
       Serial.println(" m/s");      
 #endif
-      sv[index++]=speed;
+      if(index < 100)
+        sv[index++]=speed;
     }
     else
     {
@@ -85,17 +95,25 @@ void loop()
           sum_speed += sv[i];
         }        
         avr_speed = sum_speed / index;
-        index = 0;
 
         if(avr_speed > 2)
         {
+#ifdef DEBUG      
           Serial.print("avr speed : ");
           Serial.print(avr_speed);
           Serial.println(" m/s");      
+          //Serial.println(index);      
+#endif
+          lcd.setCursor(0,0);
+          lcd.print(avr_speed);
+          lcd.print(" m/s");
+
         }
+        index = 0;
 
       }
     }
-    //delay(10); //1초마다 측정값을 보여줍니다.
+    //delayMicroseconds(100);
+    delay(5); //1초마다 측정값을 보여줍니다.
   }
 }

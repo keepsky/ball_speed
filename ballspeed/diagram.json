@@ -3,14 +3,25 @@
   "author": "박준호",
   "editor": "wokwi",
   "parts": [
-    { "type": "wokwi-arduino-uno", "id": "uno", "top": 10.2, "left": 28.2, "attrs": {} },
-    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -161.7, "left": 72.7, "attrs": {} }
+    { "type": "wokwi-arduino-uno", "id": "uno", "top": -85.8, "left": 9, "attrs": {} },
+    { "type": "wokwi-hc-sr04", "id": "ultrasonic1", "top": -296.1, "left": 43.9, "attrs": {} },
+    {
+      "type": "wokwi-lcd1602",
+      "id": "lcd2",
+      "top": -156.8,
+      "left": 341.6,
+      "attrs": { "pins": "i2c" }
+    }
   ],
   "connections": [
-    [ "ultrasonic1:GND", "uno:GND.1", "black", [ "v28.8", "h-58.5" ] ],
-    [ "uno:5V", "ultrasonic1:VCC", "red", [ "v38.3", "h-197.8", "v-307.2" ] ],
     [ "ultrasonic1:TRIG", "uno:9", "green", [ "v57.6", "h37.2" ] ],
-    [ "ultrasonic1:ECHO", "uno:8", "green", [ "v48", "h37.2" ] ]
+    [ "ultrasonic1:ECHO", "uno:8", "green", [ "v48", "h37.2" ] ],
+    [ "uno:GND.1", "ultrasonic1:GND", "black", [ "h0.3", "v-38.4", "h20.4" ] ],
+    [ "uno:5V", "ultrasonic1:VCC", "red", [ "v38.3", "h-197.8", "v-345.6" ] ],
+    [ "uno:5V", "lcd2:VCC", "red", [ "v76.7", "h138.2", "v-297.7" ] ],
+    [ "uno:GND.3", "lcd2:GND", "black", [ "v38.3", "h109.6", "v-268.8" ] ],
+    [ "lcd2:SDA", "uno:A4", "orange", [ "h-28.8", "v230.6", "h-61.8" ] ],
+    [ "lcd2:SCL", "uno:A5", "green", [ "h-19.2", "v259.5", "h-61.9" ] ]
   ],
   "dependencies": {}
 }
