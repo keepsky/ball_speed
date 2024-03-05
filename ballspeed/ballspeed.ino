@@ -14,6 +14,10 @@ void loop()
   double speed, tdiff, dist_diff, distance, dist_now;
   int forward;
 
+  int index=0;
+  double sv[100], sum_speed, avr_speed;
+
+
   while(1)
   {
     digitalWrite(TRIG, HIGH);
@@ -60,6 +64,7 @@ void loop()
 #endif
     if(speed > 2)
     {
+#if 0      
       Serial.print("speed : ");
       if(forward)
         Serial.print("(+) ");
@@ -67,6 +72,29 @@ void loop()
         Serial.print("(-) ");
       Serial.print(speed);
       Serial.println(" m/s");      
+#endif
+      sv[index++]=speed;
+    }
+    else
+    {
+      if(index > 0)
+      {
+        sum_speed = 0;
+        for(int i=0;i<index;i++)
+        {
+          sum_speed += sv[i];
+        }        
+        avr_speed = sum_speed / index;
+        index = 0;
+
+        if(avr_speed > 2)
+        {
+          Serial.print("avr speed : ");
+          Serial.print(avr_speed);
+          Serial.println(" m/s");      
+        }
+
+      }
     }
     //delay(10); //1초마다 측정값을 보여줍니다.
   }
