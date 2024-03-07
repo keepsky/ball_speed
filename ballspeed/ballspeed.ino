@@ -1,5 +1,5 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C_Hangul.h>
+#include <Wire.h> // arduino IDE에서 해당 library 추가 필요
+#include <LiquidCrystal_I2C_Hangul.h> // arduino IDE에서 해당 library 추가 필요
 
 
 #define TRIG 9 //TRIG 핀 설정 (초음파 보내는 핀)
@@ -25,7 +25,7 @@ void loop()
 
   int index=0;
   double sv[100], sum_speed, avr_speed;
-
+  int empty=0;
 
   while(1)
   {
@@ -85,8 +85,9 @@ void loop()
       if(index < 100)
         sv[index++]=speed;
     }
-    else
+    else if(empty++ > 5)
     {
+      empty = 0;
       if(index > 0)
       {
         sum_speed = 0;
@@ -106,13 +107,14 @@ void loop()
 #endif
           lcd.setCursor(0,0);
           lcd.print(avr_speed);
-          lcd.print(" m/s");
+          lcd.print(" m/s  ");
 
         }
         index = 0;
 
       }
     }
+
     //delayMicroseconds(100);
     delay(5); //1초마다 측정값을 보여줍니다.
   }
