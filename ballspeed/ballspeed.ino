@@ -1,7 +1,8 @@
 #include <Wire.h> // arduino IDE에서 해당 library 추가 필요
-#include <LiquidCrystal_I2C_Hangul.h> // arduino IDE에서 해당 library 추가 필요
+//#include <LiquidCrystal_I2C_Hangul.h> // arduino IDE에서 해당 library 추가 필요
+#include <LiquidCrystal_I2C.h> // arduino IDE에서 해당 library 추가 필요
 
-//#define DEBUG    
+#define DEBUG    
 //#define TRACE
 
 #define SLEEP_DURATION 5
@@ -10,16 +11,27 @@
 #define TRIG 9 //TRIG 핀 설정 (초음파 보내는 핀)
 #define ECHO 8 //ECHO 핀 설정 (초음파 받는 핀)
 
-LiquidCrystal_I2C_Hangul lcd(0x27, 16, 2);
+//LiquidCrystal_I2C_Hangul lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() 
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
+  while(!Serial)
+  {
+    delay(10);
+  }
+
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
 
   lcd.init();
   lcd.backlight();
+
+  Serial.println("setup ok");
+  
+  lcd.setCursor(0,0);
+  lcd.print("START");
 }
 
 void loop()
@@ -34,7 +46,7 @@ void loop()
   int empty=0;
   int cycle=0;
 
-#if 0
+#if 1
   while(1)
   {
     digitalWrite(TRIG, HIGH);
@@ -49,10 +61,10 @@ void loop()
     digitalWrite(TRIG, LOW);
     tnow = pulseIn (ECHO, HIGH); //물체에 반사되어돌아온 초음파의 시간을 변수에 저장합니다.
 
-    dist_now = ((double)(340*tbase)/1000)/2; 
-    distance = ((double)(340*tnow)/1000)/2; 
+    distance = ((double)(340*tbase)/1000)/2; 
+    dist_now = ((double)(340*tnow)/1000)/2; 
 
-    tdiff = (double)(tnow - tbase)/1000000;   // sec
+    tdiff = (double)(tnow - tbase)/(double)1000000;   // sec
 
     dist_diff = (dist_now - distance)/1000;  
     speed = dist_diff/tdiff;    // m/s
@@ -67,12 +79,25 @@ void loop()
       forward = 1;
     }
 
-    lcd.setCursor(0,0);
-    lcd.print("AVR : ");
-    lcd.print(speed);
-    lcd.print(" m/s  ");
+    if(speed > 5)
+    {
+      lcd.setCursor(0,0);
+      lcd.print("AVR : ");
+      lcd.print(speed);
+      lcd.print(" m/s  ");
+    }
+#ifdef DEBUG      
+      Serial.print("dist_diff : ");
+      Serial.println(dist_diff);
+      Serial.print("tdiff : ");
+      Serial.println(tdiff);
 
-    delay(100);
+      Serial.print("speed : ");
+      Serial.print(speed);
+      Serial.println(" m/s");      
+#endif
+
+    delay(10);
     continue;
 
 #ifdef TRACE
