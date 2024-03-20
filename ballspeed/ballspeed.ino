@@ -17,7 +17,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 #define SONIC_DURATION  10
 #define DELAY_TERM      100
-#define IDEL_TIME       200
+#define IDEL_TIME       150
 
 
 void setup() 
@@ -82,7 +82,7 @@ void loop(void)
     Serial.println(diff);
 #endif
 
-    if(speed > 2)
+    if(speed > 5)
     {
 #ifdef DEBUG      
       Serial.print("speed : ");
@@ -93,15 +93,19 @@ void loop(void)
         max_speed = speed;
       }
       lcd.setCursor(0,0);
-      lcd.print(speed);
+      lcd.print(max_speed);
       lcd.print(" m/s   ");      
+      idle_time = 0;
     }
-    else if(idle_time++ > IDEL_TIME)
+    else if(idle_time > IDEL_TIME)
     {
       idle_time = 0;
+      max_speed = 0;
       lcd.setCursor(0,0);
       lcd.print("IDLE          ");            
+
     }
+    idle_time++;
     delayMicroseconds(DELAY_TERM); 
   }
 }
