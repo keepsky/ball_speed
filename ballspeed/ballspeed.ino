@@ -2,7 +2,7 @@
 //#include <LiquidCrystal_I2C_Hangul.h> // arduino IDE에서 해당 library 추가 필요
 #include <LiquidCrystal_I2C.h> // arduino IDE에서 해당 library 추가 필요
 
-#define DEBUG    
+//#define DEBUG    
 //#define TRACE
 
 #define SLEEP_DURATION 5
@@ -13,6 +13,12 @@
 
 //LiquidCrystal_I2C_Hangul lcd(0x27, 16, 2);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+
+#define SONIC_DURATION  10
+#define DELAY_TERM      100
+#define IDEL_TIME       200
+
 
 void setup() 
 {
@@ -34,6 +40,73 @@ void setup()
   lcd.print("START");
 }
 
+double sonicRead(void)
+{
+  unsigned long duration;
+
+  digitalWrite(TRIG, HIGH);
+  delayMicroseconds(SONIC_DURATION);
+  digitalWrite(TRIG, LOW);
+
+  duration = pulseIn(ECHO, HIGH);
+  return ((double)duration * 0.00034 / 2);
+}
+
+void loop(void)
+{
+  double distance1, distance2, speed, diff, max_speed=0;
+  unsigned long t1, t2;
+  int idle_time=0;
+
+  while(1)
+  {
+    distance1 = sonicRead();
+    t1 = micros();
+    distance2 = sonicRead();
+    t2 = micros();
+
+    diff = (double)(t2 - t1)/1000000.0;
+
+    speed = (distance2 - distance1) * 1.0 / (diff);
+    if(speed < 0)
+    {
+      speed *= (-1);
+    }
+
+#ifdef TRACE
+    Serial.print("distance1 : ");
+    Serial.println(distance1);
+    Serial.print("distance2 : ");
+    Serial.println(distance2);
+    Serial.print("time : ");
+    Serial.println(diff);
+#endif
+
+    if(speed > 2)
+    {
+#ifdef DEBUG      
+      Serial.print("speed : ");
+      Serial.println(speed);
+#endif
+      if(speed > max_speed)
+      {
+        max_speed = speed;
+      }
+      lcd.setCursor(0,0);
+      lcd.print(speed);
+      lcd.print(" m/s   ");      
+    }
+    else if(idle_time++ > IDEL_TIME)
+    {
+      idle_time = 0;
+      lcd.setCursor(0,0);
+      lcd.print("IDLE          ");            
+    }
+    delayMicroseconds(DELAY_TERM); 
+  }
+}
+
+#if 0
 void loop()
 {
   long duration, tbase, tnow;
@@ -292,3 +365,4 @@ void loop()
     delay(SLEEP_DURATION); //1초마다 측정값을 보여줍니다.
   }
 }
+#endif
