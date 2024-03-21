@@ -19,7 +19,8 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 #define DELAY_TERM      100
 #define IDEL_TIME       150
 
-
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 void setup() 
 {
   Serial.begin(115200);
@@ -40,6 +41,18 @@ void setup()
   lcd.print("START");
 }
 
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+void loop(void)
+{
+  //checkBallSpeed();
+  checkDistance();
+}
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
 double sonicRead(void)
 {
   unsigned long duration;
@@ -52,7 +65,10 @@ double sonicRead(void)
   return ((double)duration * 0.00034 / 2);
 }
 
-void loop(void)
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+void checkBallSpeed(void)
 {
   double distance1, distance2, speed, diff, max_speed=0;
   unsigned long t1, t2;
@@ -109,6 +125,43 @@ void loop(void)
     delayMicroseconds(DELAY_TERM); 
   }
 }
+
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
+void checkDistance(void)
+{
+  double distance;
+
+  while(1)
+  {
+    distance = sonicRead();
+
+
+#ifdef TRACE
+    Serial.print("distance1 : ");
+    Serial.println(distance1);
+#endif
+
+    if(distance > 0.1)
+    {
+#ifdef DEBUG      
+      Serial.print("distance : ");
+      Serial.println(distance);
+#endif
+      lcd.setCursor(0,0);
+      lcd.print(distance);
+      lcd.print(" m     ");      
+    }
+    delayMicroseconds(DELAY_TERM); 
+  }
+}
+
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
 
 #if 0
 void loop()
